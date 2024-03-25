@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 
@@ -168,20 +169,34 @@ void swap(int *a, int *b)
     *b = temp;
 }
 
-void permute(int *array, int i, int length)
+void swapstr(char *a, char *b)
 {
-    if (i == length) {
-        printArray(array, length);
+    char temp[128] = {0};
 
-        return;
+    strcpy(temp, a);
+    strcpy(a, b);
+    strcpy(b, temp);
+}
+
+void permute(int *input, int start, int size)
+{
+    if (start == size) {
+        // Do something
+        int index = 0;
+
+        for (; index < size - 1; ++index) {
+            printf("%d ", input[index]);
+        }
+
+        printf("%d\n", input[index]);
     }
 
-    for (int j = i; j < length; j++) {
-        swap(array + i, array + j);
+    for (int i = start; i < size; ++i) {
+        swap(input + start, input + i);
 
-        permute(array, i + 1, length);
+        permute(input, start + 1, size);
 
-        swap(array + i, array + j);
+        swap(input + start, input + i);
     }
 }
 
@@ -307,7 +322,7 @@ void mergeSort_ver1(int *input, int start, int end)
     if (start >= end)
         return;
 
-    int *tempArr = (int *)malloc(sizeof(int) * (end - start + 1));
+    int *tempArr = (int *) malloc(sizeof(int) * (end - start + 1));
 
     msort(input, tempArr, start, end);
 
@@ -324,7 +339,7 @@ void mergeSort_ver0(int *input, int start, int end)
     mergeSort_ver0(input, start, mid);
     mergeSort_ver0(input, mid + 1, end);
 
-    int *temp = (int *)malloc(sizeof(int) * (end - start + 1));
+    int *temp = (int *) malloc(sizeof(int) * (end - start + 1));
 
     int l = start, r = mid + 1, s = start;
 
@@ -354,8 +369,8 @@ void mergeSort_ver0(int *input, int start, int end)
 
 int cmp(const void *a, const void *b)
 {
-    int l = *(int *)a;
-    int r = *(int *)b;
+    int l = *(int *) a;
+    int r = *(int *) b;
 
     if (l < r) {
         return -1;
@@ -366,6 +381,11 @@ int cmp(const void *a, const void *b)
     else {
         return 0;
     }
+}
+
+int cmpstr(const void *a, const void *b)
+{
+    return strcmp((const char *)a, (const char *)b);
 }
 
 int main(int argc, char **argv)
@@ -444,6 +464,72 @@ int main(int argc, char **argv)
     for (int i = 0; i < 11; ++i) {
         printf("%d\n", unordered[i]);
     }
+
+    int a0, a1, a2;
+
+    int X = (a0 = 2, a1 = 6, a2 = 8);
+
+    printf("X: %d\n", X);
+
+//    float f;
+//
+//    scanf("%f", &f);
+//
+//    if (f == 3.5) {
+//        printf("Yes\n");
+//    }
+//    else {
+//        printf("No\n");
+//    }
+
+//    char str[][30] = {"turbo c", "turbo br", "dbase", "mdanreiaw", "lfjwae", "jfawlej"};
+//
+//    int n;
+//
+//    scanf("%d", &n);
+//
+//    for (int i = 0; i < n - 1; ++i) {
+//        for (int j = i + 1; j <= n - 1; j++) {
+//            if (str[i] > str[j]) {
+//                swapstr(str[i], str[j]);
+//            }
+//        }
+//    }
+//
+//    for (int i = 0; i < 5; ++i) {
+//        puts(str[i]);
+//    }
+
+//    char text[][64] = {"This is a text", "ABC", "Yes sir", "Bad boy"};
+//
+//    printf("text array size: %d, text item size: %d\n", sizeof(text) / sizeof(text[0]), sizeof(text[0]));
+//
+//    qsort(text, sizeof(text) / sizeof(text[0]), sizeof(text[0]), cmpstr);
+//
+//    for (int i = 0; i < sizeof(text) / sizeof(text[0]); ++i) {
+//        puts(text[i]);
+//    }
+
+//    int n;
+//
+//    scanf("%d", &n);
+//
+//    printf("%d = ", n);
+//
+//    for (int i = 2; i <= n; ++i) {
+//        while (n != i) {
+//            if (n % i == 0) {
+//                printf("%d * ", i);
+//
+//                n = n / i;
+//            }
+//            else {
+//                break;
+//            }
+//        }
+//    }
+//
+//    printf("%d", n);
 
     return 0;
 }
