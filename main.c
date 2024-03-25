@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) > (b) ? (a) : (b))
@@ -60,9 +62,7 @@ int maxSubssequenceSum_ver2(const int *input, int begin, int end)
     for (int i = mid; i >= begin; --i) {
         temp += input[i];
 
-        if (temp > suml) {
-            suml = temp;
-        }
+        suml = max(suml, temp);
     }
 
     temp = 0;
@@ -70,9 +70,7 @@ int maxSubssequenceSum_ver2(const int *input, int begin, int end)
     for (int i = mid + 1; i <= end; ++i) {
         temp += input[i];
 
-        if (temp > sumr) {
-            sumr = temp;
-        }
+        sumr = max(sumr, temp);
     }
 
     return max(suml + sumr, max(l, r));
@@ -151,6 +149,225 @@ ull myPow(ull a, ull b)
     }
 }
 
+void printArray(int *array, int N)
+{
+    for (int i = 0; i < N; i++) {
+        if (i != N - 1) {
+            printf("%d ", array[i]);
+        }
+        else {
+            printf("%d\n", array[i]);
+        }
+    }
+}
+
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void permute(int *array, int i, int length)
+{
+    if (i == length) {
+        printArray(array, length);
+
+        return;
+    }
+
+    for (int j = i; j < length; j++) {
+        swap(array + i, array + j);
+
+        permute(array, i + 1, length);
+
+        swap(array + i, array + j);
+    }
+}
+
+int bubbleSort(int *input, int n)
+{
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (input[j] > input[j + 1]) {
+                int temp = input[j];
+                input[j] = input[j + 1];
+                input[j + 1] = temp;
+            }
+        }
+    }
+
+    return n;
+}
+
+int insertionSort(int *input, int n)
+{
+    for (int i = 1; i < n; ++i) {
+        int temp = input[i];
+        int j;
+
+        for (j = i; j > 0 && input[j - 1] > temp; --j) {
+            input[j] = input[j - 1];
+        }
+
+        input[j] = temp;
+    }
+
+    return n;
+}
+
+int selectionSort(int *input, int n)
+{
+    int minValue, minIndex;
+
+    for (int i = 0; i < n; ++i) {
+        minValue = input[i];
+        minIndex = i;
+
+        for (int j = i; j < n; j++) {
+            if (input[j] < minValue) {
+                minValue = input[j];
+                minIndex = j;
+            }
+        }
+
+        swap(&input[i], &input[minIndex]);
+    }
+
+    return n;
+}
+
+void quickSort(int *input, int start, int end)
+{
+    if (start >= end)
+        return;
+
+    int key = input[start];
+    int i = start;
+    int j = end;
+
+    while (i < j) {
+        while (i < j && input[j] >= key) {
+            --j;
+        }
+
+        while (i < j && input[i] <= key) {
+            ++i;
+        }
+
+        if (i < j) {
+            swap(&input[i], &input[j]);
+        }
+    }
+
+    assert(i == j);
+
+    swap(&input[i], &input[start]);
+
+    quickSort(input, start, i - 1);
+    quickSort(input, j + 1, end);
+}
+
+void msort(int *input, int *tempArr, int start, int end)
+{
+    if (start >= end)
+        return;
+
+    int mid = (start + end) / 2;
+
+    msort(input, tempArr, start, mid);
+    msort(input, tempArr, mid + 1, end);
+
+    int l = start, r = mid + 1, s = start;
+
+    while (l <= mid && r <= end) {
+        if (input[l] < input[r]) {
+            tempArr[s++] = input[l++];
+        }
+        else {
+            tempArr[s++] = input[r++];
+        }
+    }
+
+    while (l <= mid) {
+        tempArr[s++] = input[l++];
+    }
+
+    while (r <= end) {
+        tempArr[s++] = input[r++];
+    }
+
+    for (int i = start; i < s; ++i) {
+        input[i] = tempArr[i];
+    }
+}
+
+void mergeSort_ver1(int *input, int start, int end)
+{
+    if (start >= end)
+        return;
+
+    int *tempArr = (int *)malloc(sizeof(int) * (end - start + 1));
+
+    msort(input, tempArr, start, end);
+
+    free(tempArr);
+}
+
+void mergeSort_ver0(int *input, int start, int end)
+{
+    if (start >= end)
+        return;
+
+    int mid = (start + end) / 2;
+
+    mergeSort_ver0(input, start, mid);
+    mergeSort_ver0(input, mid + 1, end);
+
+    int *temp = (int *)malloc(sizeof(int) * (end - start + 1));
+
+    int l = start, r = mid + 1, s = start;
+
+    while (l <= mid && r <= end) {
+        if (input[l] < input[r]) {
+            temp[s++] = input[l++];
+        }
+        else {
+            temp[s++] = input[r++];
+        }
+    }
+
+    while (l <= mid) {
+        temp[s++] = input[l++];
+    }
+
+    while (r <= end) {
+        temp[s++] = input[r++];
+    }
+
+    for (int i = start; i <= end; ++i) {
+        input[i] = temp[i];
+    }
+
+    free(temp);
+}
+
+int cmp(const void *a, const void *b)
+{
+    int l = *(int *)a;
+    int r = *(int *)b;
+
+    if (l < r) {
+        return -1;
+    }
+    else if (l > r) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
 int main(int argc, char **argv)
 {
     int input0[] = {-2, 11, -4, 13, -5, -2};
@@ -174,6 +391,59 @@ int main(int argc, char **argv)
     printf("gcd(%d, %d): %d\n", 15, 50, gcd(15, 50));
 
     printf("myPow: %llu, %llu, result = %llu\n", 2ull, 30ull, myPow(2, 30));
+
+//    FILE *file = fopen("../CMakeLists.txt", "r");
+//
+//    printf("file: %p\n", file);
+//
+//    int c;
+//
+//    while ((c = fgetc(file)) != EOF) {
+//        putchar(c);
+//    }
+//
+//    if (feof(file)) {
+//        printf("eof file\n");
+//    }
+//
+//    if (ferror(file)) {
+//        printf("error file\n");
+//    }
+//
+//    printf("Done\n");
+//
+//    fclose(file);
+//
+//    printf("EOF value: %d\n\n\n", (int)EOF);
+//
+//    char arr[8];
+//
+//    fgets(arr, sizeof(arr), stdin);
+//
+//    printf("arr: %s\n", arr);
+//
+//    int a, b;
+//
+//    scanf("%d %d", &a, &b);
+//
+//    printf("a: %d b: %d\n", a, b);
+
+    int A[4] = {1, 2, 3, 4};
+
+    permute(A, 0, 4);
+
+    int unordered[] = {9, 6, 4, 34, 56, 3, 9, 1, 23, -9, 101};
+
+//    qsort(unordered, 11, sizeof(int), cmp);
+//    selectionSort(unordered, 11);
+//    mergeSort_ver0(unordered, 0, 10);
+    mergeSort_ver1(unordered, 0, 10);
+//    quickSort(unordered, 0, 10);
+
+
+    for (int i = 0; i < 11; ++i) {
+        printf("%d\n", unordered[i]);
+    }
 
     return 0;
 }
