@@ -385,7 +385,127 @@ int cmp(const void *a, const void *b)
 
 int cmpstr(const void *a, const void *b)
 {
-    return strcmp((const char *)a, (const char *)b);
+    return strcmp((const char *) a, (const char *) b);
+}
+
+struct Node {
+    int value;
+
+    struct Node *next;
+};
+
+struct Student {
+    int score;
+
+    char id[8];
+};
+
+int cmpstudent(const void *a, const void *b)
+{
+    const struct Student *sa = (const struct Student *) a;
+    const struct Student *sb = (const struct Student *) b;
+
+    if (sa->score < sb->score) {
+        return -1;
+    }
+    else if (sa->score > sb->score) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+struct Node *listNode_reverse_ver0(struct Node *head)
+{
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    struct Node *n = listNode_reverse_ver0(head->next);
+
+    struct Node *newHead = n;
+
+    while (n->next != NULL) {
+        n = n->next;
+    }
+
+    n->next = head;
+    head->next = NULL;
+
+    return newHead;
+}
+
+struct Node *listNode_reverse_ver1(struct Node *head)
+{
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    struct Node *prev = NULL, *curr = head, *next;
+
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+
+        prev = curr;
+        curr = next;
+    }
+
+    return prev;
+}
+
+char *str_reverse_ver0(char *str)
+{
+    int len = strlen(str);
+
+    if (len == 0 || len == 1) {
+        return str;
+    }
+
+    for (int i = 0, j = len - 1; i <= j; ++i, --j) {
+        char temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+    }
+
+    return str;
+}
+
+void minMaxValue(int *arr, int n, int *imax, int *imin)
+{
+    if (n == 0) {
+        return;
+    }
+
+    if (n == 1) {
+        *imax = arr[0];
+        *imin = arr[0];
+
+        return;
+    }
+
+    int mid = n / 2;
+
+    int lmin, rmin, lmax, rmax;
+
+    minMaxValue(arr, mid, &lmax, &lmin);
+    minMaxValue(arr + mid, n - mid, &rmax, &rmin);
+
+    *imax = max(lmax, rmax);
+    *imin = min(lmin, rmin);
+}
+
+void convertstr(int n)
+{
+    int i;
+
+    if ((i = n / 10) != 0) {
+        convertstr(i);
+    }
+
+    putchar(n % 10 + '0');
+//    putchar(' ');
 }
 
 int main(int argc, char **argv)
@@ -457,8 +577,8 @@ int main(int argc, char **argv)
 //    qsort(unordered, 11, sizeof(int), cmp);
 //    selectionSort(unordered, 11);
 //    mergeSort_ver0(unordered, 0, 10);
-    mergeSort_ver1(unordered, 0, 10);
-//    quickSort(unordered, 0, 10);
+//    mergeSort_ver1(unordered, 0, 10);
+    quickSort(unordered, 0, 10);
 
 
     for (int i = 0; i < 11; ++i) {
@@ -473,7 +593,9 @@ int main(int argc, char **argv)
 
 //    float f;
 //
-//    scanf("%f", &f);
+//    scanf("%d", &f);
+//
+//    printf("f: %f\n", f);
 //
 //    if (f == 3.5) {
 //        printf("Yes\n");
@@ -530,6 +652,136 @@ int main(int argc, char **argv)
 //    }
 //
 //    printf("%d", n);
+
+//    char s[64] = {0};
+//
+//    scanf("%s", s);
+//
+//    if (strchr(s, '.')) {
+//        printf("%s is a float\n", s);
+//    }
+//
+//    float f = strtof(s, NULL);
+//
+//    printf("f: %f\n", f);
+//
+//    if (f == (int)f) {
+//        printf("f is integer\n");
+//    }
+//    else {
+//        printf("f is not integer\n");
+//    }
+
+//    int n;
+//
+//    scanf("%d", &n);
+//
+//    printf("%d=", n);
+//
+//    for (int i = 2; i <= n; ++i) {
+//        while (n != i) {
+//            if (n % i == 0) {
+//                printf("%d*", i);
+//                n /= i;
+//            }
+//            else {
+//                break;
+//            }
+//        }
+//    }
+//
+//    printf("%d\n", n);
+
+//    float f = 2.2;
+//
+//    float d = f - 1.1;
+//
+//    printf("%.30f\n%.30f\n%.30f\n", f, d, 3.5);
+
+    struct Node list[6] = {
+        {.value=1, .next=&list[1],},
+        {.value=2, .next=&list[2],},
+        {.value=3, .next=&list[3],},
+        {.value=4, .next=&list[4],},
+        {.value=5, .next=&list[5],},
+        {.value=6, .next=NULL,},
+    };
+
+    struct Node *head = &list[0];
+
+    for (struct Node *node = head; node != NULL; node = node->next) {
+        printf("node value: %d\n", node->value);
+    }
+
+    printf("====================\n");
+
+    head = listNode_reverse_ver0(head);
+
+    for (struct Node *node = head; node != NULL; node = node->next) {
+        printf("node value: %d\n", node->value);
+    }
+
+    printf("====================\n");
+
+    head = listNode_reverse_ver1(head);
+
+    for (struct Node *node = head; node != NULL; node = node->next) {
+        printf("node value: %d\n", node->value);
+    }
+
+    printf("====================\n");
+
+    struct Student students[6] = {
+        {.score=98, .id="1"},
+        {.score=60, .id="2"},
+        {.score=60, .id="3"},
+        {.score=94, .id="4"},
+        {.score=98, .id="5"},
+        {.score=81, .id="6"},
+    };
+
+    for (int i = 0; i < 6; ++i) {
+        printf("id: %s, score: %d\n", students[i].id, students[i].score);
+    }
+
+    qsort(students, 6, sizeof(struct Student), cmpstudent);
+
+    printf("after sort\n");
+
+    for (int i = 0; i < 6; ++i) {
+        printf("id: %s, score: %d\n", students[i].id, students[i].score);
+    }
+
+    int lowestScore = students[0].score;
+    int highestScore = students[5].score;
+
+    for (int i = 0; i < 6; ++i) {
+        if (students[i].score == lowestScore) {
+            printf("lowest. id: %s, score: %d\n", students[i].id, students[i].score);
+        }
+    }
+
+    for (int i = 0; i < 6; ++i) {
+        if (students[i].score == highestScore) {
+            printf("highest. id: %s, score: %d\n", students[i].id, students[i].score);
+        }
+    }
+
+    char str[64] = "Hello world!";
+
+    puts(str_reverse_ver0(str));
+
+    int arr[] = {3, 12, 72, -20, 33};
+
+    int imax, imin;
+
+    minMaxValue(arr, 5, &imax, &imin);
+
+    printf("max: %d, min: %d\n", imax, imin);
+
+    int numstr = 123456;
+
+    convertstr(numstr);
 
     return 0;
 }
